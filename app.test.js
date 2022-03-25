@@ -3,7 +3,18 @@ import { describe, jest } from '@jest/globals';
 import index from './index.js';
 const server = new index();
 
-jest.setTimeout(20000);
+jest.setTimeout(5000);
+
+//==================================================================================================================
+//                                           Home Route Test
+//==================================================================================================================
+describe('Home Route Test', () => {
+    it('Should return a success response', async () => {
+        const response = await server.getHome();
+        expect(response.status).toBe(200);
+    });
+});
+
 //==================================================================================================================
 //                                           User Tests
 //==================================================================================================================
@@ -13,21 +24,92 @@ describe('User API tests', () => {
         expect(res.code).toBe(200);
     });
 
-    it('Requests a single user from the database with an ID of 8', async () => {
-        const res = await server.getUser(8);
+    it('Requests a single user from the database with an ID of 7', async () => {
+        const res = await server.getUser(7);
         expect(res.code).toBe(200);
-        expect(res).toStrictEqual({
-            code: 200,
-            queryResult: [
-                {
-                    Id: 8,
-                    Username: 'macks',
-                    Email: 'test@test.test',
-                    Password: 'test',
-                },
-            ],
-        });
     });
+
+    it('Fails to validate a new user because their password is short', async () => {
+        const res = await server.failAuthShortPass();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('PASSWORD_SHORT');
+        expect(res.message).toBe('Password must be at least 8 characters long');
+    });
+    
+    it('Fails to validate a new user because their username is short', async () => {
+        const res = await server.failAuthShortUser();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('USERNAME_SHORT');
+        expect(res.message).toBe('Username must be at least 4 characters long');
+    });
+
+    it('Fails to validate a new user because they do not have a number within their password', async () => {
+        const res = await server.failAuthNoNumber();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('NO_NUMBER');
+        expect(res.message).toBe('Password must have a number');
+    });
+
+    it('Fails to validate a new user because they do not have a special character within their password', async () => {
+        const res = await server.failAuthNoSpecialChar();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('NO_SPECIAL_CHAR');
+        expect(res.message).toBe('Password must have a special character');
+    });
+
+    it('Fails to validate a new user because they do not have a capital letter within their password', async () => {
+        const res = await server.failAuthNoCapital();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('NO_CAPITAL_LETTER');
+        expect(res.message).toBe('Password must have a capital letter');
+    });
+
+    it('Fails to validate a new user because they do not have a lowercase letter within their password', async () => {
+        const res = await server.failAuthNoLowercase();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('NO_LOWERCASE_LETTER');
+        expect(res.message).toBe('Password must have a lowercase letter');   
+    })
+
+    it('Fails to validate a new user because they do not include a username', async () => {
+        const res = await server.failAuthNoUsername();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('USERNAME_NOT_FOUND');
+        expect(res.message).toBe('No username input');
+    });
+
+    it('Fails to validate a new user because they do not include a password', async () => {
+        const res = await server.failAuthNoPassword();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('PASSWORD_NOT_FOUND');
+        expect(res.message).toBe('No password input');
+    });
+
+    it('Fails to validate a new user because the body contains no input', async () => {
+        const res = await server.failAuthNoInput();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('NO_USER_INFO');
+        expect(res.message).toBe('No user input');
+    });
+
+    it('Fails to log in as a user because they submitted invalid credentials', async () => {
+        const res = await server.failLoginBadPassword();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('INVALID_CREDENTIALS');
+        expect(res.message).toBe('Invalid username or password');
+    });
+
+    it('Fails to log in as a user because a user with that username does not exist', async () => {
+        const res = await server.failLoginBadUsername();
+        expect(res.code).toBe(401);
+        expect(res.errorType).toBe('USER_NOT_FOUND');
+        expect(res.message).toBe('User not found');
+    });
+
+    it('Successfully logs in as a user', async () => {
+        const res = await server.loginUser();
+        expect(res.code).toBe(200);
+    })
 
     it('Adds a user to the DB', async () => {
         const res = await server.newUser();

@@ -1,11 +1,171 @@
 import fetch, { FetchError } from 'node-fetch';
-class index {
+export default class index {
+//==================================================================================================================
+//                                           Home Routes
+//==================================================================================================================
+    async getHome(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/`);
+        return response;
+    }
+//==================================================================================================================
+//                                           User Routes
+//==================================================================================================================
     async getUsers(){
         const response = await fetch(`https://prestoapi.azurewebsites.net/users`);
         return await response.json();
     }
     async getUser(id){
         const response = await fetch(`https://prestoapi.azurewebsites.net/users/${id}`);
+        return await response.json();
+    }
+    async failAuthShortPass(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'test',
+                password: 'T#sting'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthShortUser(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'te',
+                password: 'T#stign2'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoNumber(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'test',
+                password: 'T#stingb'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoSpecialChar(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'test',
+                password: 'Testing2'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoCapital(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'test',
+                password: 't#sting2'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoLowercase(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'test',
+                password: 'T#STING2'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoUsername(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: 'T#sting2'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoPassword(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'test'
+            })
+        });
+        return await response.json();
+    }
+    async failAuthNoInput(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/new`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return await response.json();
+    }
+    async failLoginBadPassword(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'Mackslemus1',
+                password: 'G00dP@ss0rd'
+            })
+        });
+        return await response.json();
+    }
+    async failLoginBadUsername(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'Mackslemus',
+                password: 'G00dP@ssw0rd'
+            })
+        });
+        return await response.json();
+    }
+    async loginUser(){
+        const response = await fetch(`https://prestoapi.azurewebsites.net/users/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: 'Mackslemus1',
+                password: 'G00dP@ssw0rd'
+            })
+        });
         return await response.json();
     }
     async newUser(){
@@ -15,9 +175,9 @@ class index {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                "username": "macks",
+                "username": "macksTest",
                 "email": "test@test.test",
-                "password": "test"
+                "password": "t3st_Password"
             })
         });
         return await response.json();
@@ -43,7 +203,9 @@ class index {
         });
         return response.status;
     }
-
+//==================================================================================================================
+//                                           Device Routes
+//==================================================================================================================
     async getDevices(){
         const response = await fetch(`https://prestoapi.azurewebsites.net/devices`);
         return await response.json();
@@ -97,7 +259,9 @@ class index {
         });
         return response.status;
     }
-
+//==================================================================================================================
+//                                           Device Record Routes
+//==================================================================================================================
     async getRecords(){
         const response = await fetch(`https://prestoapi.azurewebsites.net/records`);
         return await response.json();
@@ -144,5 +308,3 @@ class index {
         return response.status;
     }
 }
-
-export default index;
