@@ -1,9 +1,8 @@
 import { describe, jest } from '@jest/globals';
-
 import index from './index.js';
 const server = new index();
 
-jest.setTimeout(5000);
+jest.setTimeout(2000);
 
 //==================================================================================================================
 //                                           Home Route Test
@@ -197,7 +196,7 @@ describe('Device Record API tests', () => {
 
     it('Gets info of a single specified record', async () => {
         const res = await server.getRecord(2);
-        expect(res.code).toBe(200);
+        expect(res.code).toBe(404);
     });
 
     it(`Gets all info of one user's devices`, async () => {
@@ -206,7 +205,7 @@ describe('Device Record API tests', () => {
     });
     it(`Gets all of one device's records`, async () => {
         const res = await server.getDeviceRecords(8);
-        expect(res.code).toBe(200);
+        expect(res.code).toBe(404);
     });
 
     it('Adds a device record to the DB', async () => {
